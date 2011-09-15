@@ -55,7 +55,7 @@ class SnootorDC: public SnootorMotor{
    * @return - this, for chaining method calls
    *
    */
-  SnootorDC* delay(uit16_t ms){SC.delay(ms);return this;} // 
+  SnootorDC* delay(uint16_t ms){SC.delay(ms);return this;} // 
   /**
    * run
    * 
