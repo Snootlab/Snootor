@@ -4,15 +4,29 @@
 // copyleft Snootlab, 2011
 // this code is public domain, enjoy!
 
+/**
+ *
+ * A bit more complicated stuff here.
+ * 
+ * we declare an "firefly" object, based on two DC motors that are controlled by two analog sensor values (e.g. light)
+ * 
+ * everything happens inside the class, so the classic init() & setup() functions are almost empty
+ *
+ **/
+
 // configuration
+
+// motor numbers for left/right wheel
 
 #define FIREFLY_DC_LEFT 1
 #define FIREFLY_DC_RIGHT 2
 
+// pin numbers for left/right eye
+
 #define FIREFLY_SENSOR_LEFT A0
 #define FIREFLY_SENSOR_RIGHT A1
 
-#define LCD_DEBUG 1
+// directions
 
 #define DIR_STOP 0
 #define DIR_FWD_LEFT 1
@@ -32,6 +46,8 @@
 
 #include <Wire.h>
 #include <snootor.h>
+
+#define LCD_DEBUG 1
 
 #ifdef LCD_DEBUG
 #include <LiquidCrystal.h>

@@ -29,7 +29,7 @@ Serial.begin(115200);
  Wire.begin();
   Motor_1.init(1);
   Motor_2.init(2);
-	Serial.println("init ok");
+  Serial.println("init ok");
 }
 
 void loop(){

@@ -12,40 +12,6 @@ works for up to 2 stepper or 4 dc or 2 dc+1 stepper motors
 
 identification is done by "motornumbers" passed to init() methods
 
-pins/registers used : 
-
-stepper 1:
-pin 11/register 10  - coil "A"
-pin  3/register 11   - coil "C"
-
-stepper 2:
-pin  6/register 13  - coil "A"
-pin  5/register 12   - coil "C"
-
-dc 1:
-pin 11/register 10
-
-dc 2:
-pin 3/register 11
-
-dc 3:
-pin 5/register 12
-
-dc 4:
-pin 6/register 13
-
-4Bit-pwm for extra slots : 
-
-pwm1 : 0xF0 on register 14
-pwm2 : 0x0F on register 14
-pwm3 : 0xF0 on register 15
-pwm4 : 0x0F on register 15
-pwm5 : 0xF0 on register 16
-pwm6 : 0x0F on register 16
-pwm7 : 0xF0 on register 17
-pwm8 : 0x0F on register 17
-
-
 -----
 
 basic use : 

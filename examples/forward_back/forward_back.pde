@@ -7,7 +7,7 @@
 
 /*
 
-sketch with one stepper motor, aiming to dod exactly one turn (and back)
+sketch with one stepper motor, aiming to do exactly one turn (and back)
 
 */
 
