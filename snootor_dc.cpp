@@ -6,7 +6,7 @@
 
 
 #include "snootor_dc.h"
-#include "WProgram.h"
+#include "Arduino.h"
 
 
 

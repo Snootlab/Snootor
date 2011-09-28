@@ -29,7 +29,7 @@
 #include "snootor_step.h"
 #include "snootor_defines.h"
 
-#include "WProgram.h"
+#include "Arduino.h"
 
 
   /**

@@ -13,7 +13,7 @@
  **/
 
 #include <avr/io.h>
-#include "WProgram.h"
+#include "Arduino.h"
 #include "inttypes.h"
 #include "../Wire/Wire.h"
 #include <snootor.h>
@@ -143,8 +143,8 @@ void Snootor::add(SnootorMotor*m){
 
 void Snootor::i2c(uint8_t reg,uint8_t val){
   Wire.beginTransmission(MAX_ADRESS);
-  Wire.send( reg);
-  Wire.send( val);
+  Wire.write( reg);
+  Wire.write( val);
   Wire.endTransmission();
 }
 
@@ -155,10 +155,10 @@ void Snootor::i2c(uint8_t reg,uint8_t val){
 
 void Snootor::i2c2(uint8_t reg,uint8_t val,uint8_t reg2,uint8_t val2){
   Wire.beginTransmission(MAX_ADRESS);
-  Wire.send( reg);
-  Wire.send( val);
-  Wire.send( reg2);
-  Wire.send( val2);
+  Wire.write( reg);
+  Wire.write( val);
+  Wire.write( reg2);
+  Wire.write( val2);
   Wire.endTransmission();
 }
 
