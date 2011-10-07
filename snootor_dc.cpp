@@ -10,6 +10,15 @@
 
 
 
+/**
+ * binary mask for motor control
+ *
+ **/
+static uint8_t mask_forw[]={0xFE,0xFB,0xEF,0xBF}; // bit-by-bit "and" operation, 
+static uint8_t mask_back[]={0xFD,0xF7,0xDF,0x7F}; // bit-by-bit "and" operation, 
+static uint8_t mask_rel[] ={0x03,0x0C,0xC0,0x30}; // bit-by-bit "or" operation, 
+
+
 
 
 /******************************************
@@ -196,23 +205,46 @@ void SnootorDC::init(uint8_t num,uint8_t freq) {
 }
 
 SnootorDC* SnootorDC::run(uint8_t cmd) {
+
+#ifdef MOTOR_DEBUG
+  Serial.print("before run : ");
+  Serial.println(SC._regvalue,HEX);
+#endif
+
   switch (cmd) {
   case FORWARD:
-    if(!inverted)
-      SC.i2c(registry,0x0f);
-    else
-      SC.i2c(registry,0xf0);
+    if(!inverted){
+      SC._regvalue = SC._regvalue  & mask_forw[motornum-1];
+      //      SC.i2c(registry,0x0f);
+    }
+    else{
+      SC._regvalue = SC._regvalue  & mask_back[motornum-1];
+      //      SC.i2c(registry,0xf0);
+    }
     break;
   case BACKWARD:
-    if(!inverted)
-      SC.i2c(registry,0xf0);
-    else
-      SC.i2c(registry,0x0f);
+    if(!inverted){
+      SC._regvalue = SC._regvalue  & mask_back[motornum-1];
+      //      SC.i2c(registry,0xf0);
+    }
+    else{
+      SC._regvalue = SC._regvalue  & mask_forw[motornum-1];
+      //   SC.i2c(registry,0x0f);
+    }
     break;
   case RELEASE:
-    SC.i2c(registry,0x0);
+      SC._regvalue = SC._regvalue  | mask_rel[motornum-1];
+    //    SC.i2c(registry,0x0);
     break;
   }
+
+#ifdef MOTOR_DEBUG
+  Serial.print("after run : ");
+  Serial.println(SC._regvalue,HEX);
+#endif
+
+  //  SC._regvalue=M4_MASK_FORW & M3_MASK_FORW ;
+  SC.i2c(0x02,SC._regvalue);
   return this;
 }
 

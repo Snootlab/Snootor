@@ -15,6 +15,7 @@
 #include "snootor_defines.h"
 
 #include "snootor_common.h"
+#include "snootor_motor.h"
 
 #ifndef  __SNOOTOR_DC_H
 #define  __SNOOTOR_DC_H

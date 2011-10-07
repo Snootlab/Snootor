@@ -23,9 +23,25 @@
 Snootor::Snootor(){
     motor_state=0;
     maxstate=0;
+      /**
+   * keep track of "directions"
+   **/
+    _regvalue=0xff;
+
 }
 
+void Snootor::enableMax(void) {
+  if(maxstate==0){
+    maxstate=1;
+    i2c( 0x6, 0x00);			// input and output config.
+    i2c( 0x2, 0x00);			// input and output config.
+  }
+#ifdef MOTOR_DEBUG
+  Serial.println("MAX7313 I2C INIT DONE !");
+#endif
+}
 
+/*
 void Snootor::enableMax(void) {
 // following setup is test purpose, try to improve it with mixed output style
 
@@ -52,6 +68,7 @@ void Snootor::enableMax(void) {
 #endif
 }
 
+*/
 
 /**
  *

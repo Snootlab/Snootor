@@ -180,19 +180,15 @@ uint16_t SnootorStep::halfstep(){
     case 1:
       SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C,+A-
       break;
-      
     case 2:
       SC.i2c2(motor_regA,0x0F,motor_regC,0x0); //C0,A-
       break;
-      
-      
     case 3:
       SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A-
       break;
     case 4:
       SC.i2c2(motor_regA,0x0,motor_regC,0x0F); //C-,A0
       break;
-      
     case 5:
       SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
       break;

@@ -25,6 +25,7 @@
 
 class SnootorMotor{
  public:
+
   SnootorMotor(){}
 
   virtual  uint16_t next(){} // checks if action is needed, otherwise  quits (for stepper)
