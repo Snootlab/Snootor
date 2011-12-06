@@ -174,6 +174,8 @@ void Snootor::i2c2(uint8_t reg,uint8_t val,uint8_t reg2,uint8_t val2){
   Wire.beginTransmission(MAX_ADRESS);
   Wire.send( reg);
   Wire.send( val);
+  Wire.endTransmission();
+  Wire.beginTransmission(MAX_ADRESS);
   Wire.send( reg2);
   Wire.send( val2);
   Wire.endTransmission();
