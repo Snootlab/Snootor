@@ -40,7 +40,7 @@
  **/
 static uint8_t mask_AC []={0xF9,0x9F}; // bit-by-bit "and" operation, 
 static uint8_t mask_AD []={0xFA,0xAF}; // bit-by-bit "and" operation, 
-static uint8_t mask_BC []={0x,0x0C}; // bit-by-bit "and" operation, 
+//static uint8_t mask_BC []={0x,0x0C}; // bit-by-bit "and" operation, 
 static uint8_t mask_BD []={0x03,0x0C}; // bit-by-bit "and" operation, 
 static uint8_t mask_A []={0xFE,0xFB}; // bit-by-bit "and" operation, 
 static uint8_t mask_B []={0xFD,0xF7}; // bit-by-bit "and" operation, 
