@@ -32,6 +32,23 @@
 #include "WProgram.h"
 
 
+/**
+ * binary mask for motor control
+ *
+ * each array contains values for {M1,M2}
+ *
+ **/
+static uint8_t mask_AC []={0xF9,0x9F}; // bit-by-bit "and" operation, 
+static uint8_t mask_AD []={0xFA,0xAF}; // bit-by-bit "and" operation, 
+//static uint8_t mask_BC []={0x,0x0C}; // bit-by-bit "and" operation, 
+static uint8_t mask_BD []={0x03,0x0C}; // bit-by-bit "and" operation, 
+static uint8_t mask_A []={0xFE,0xFB}; // bit-by-bit "and" operation, 
+static uint8_t mask_B []={0xFD,0xF7}; // bit-by-bit "and" operation, 
+static uint8_t mask_C []={0x03,0x0C}; // bit-by-bit "and" operation, 
+static uint8_t mask_D []={0x03,0x0C}; // bit-by-bit "and" operation, 
+static uint8_t mask_RESET[]={0x0F,0xF0}; // bit-by-bit "or" operation, 
+
+
   /**
    * empty constructor
    *
@@ -180,19 +197,15 @@ uint16_t SnootorStep::halfstep(){
     case 1:
       SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C,+A-
       break;
-      
     case 2:
       SC.i2c2(motor_regA,0x0F,motor_regC,0x0); //C0,A-
       break;
-      
-      
     case 3:
       SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A-
       break;
     case 4:
       SC.i2c2(motor_regA,0x0,motor_regC,0x0F); //C-,A0
       break;
-      
     case 5:
       SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
       break;

@@ -13,7 +13,7 @@
 
 // activates debug mode : 
 
-//#define MOTOR_DEBUG
+#define MOTOR_DEBUG
 
 #include "snootor_motor.h"
 
@@ -40,6 +40,7 @@ class Snootor{
   Snootor();
   ~Snootor(){}
   void delay(uint32_t); // scheduler
+  uint8_t _regvalue;
 #ifdef MOTOR_DEBUG
   void dump(); // debug information for each motor
 #else
