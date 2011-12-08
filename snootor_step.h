@@ -39,15 +39,17 @@
 class SnootorStep : public SnootorMotor{
   unsigned int motor_step_delay_microsecs;    // delay between steps
   unsigned int motor_step_count;              // steps per round of motor
+  uint8_t _regvalue;              // MAX 7313 registry value storage
+  uint8_t motornum;              // number of motor (1 or 2)
   uint8_t motor_mode;              // steps per tour of motor
   uint8_t motor_regA;
   uint8_t motor_regC;        // max registry for motor
   uint8_t motor_pinA;
   uint8_t motor_pinC;        // pwm pins for motor
   uint8_t pos;                                   // current step of the motor
+  volatile long steps_to_do;                           // requested steps
   uint8_t last_val, cur_val;                     // current / last coil position
   unsigned long last_time;                    // last step done un microsecs
-  long steps_to_do;                           // requested steps
   uint16_t (*callback)();
 
  public:
@@ -72,7 +74,7 @@ class SnootorStep : public SnootorMotor{
    * @param motormode - halfstep or full step 
    *
    */
-  void init(int motorstepdelay,int motorstepcount,int motornum, uint8_t motormode);//  motorstepdelay, motorstepcount, motornum, motormode
+  void init(int motorstepdelay,int motorstepcount,int motornumber, uint8_t motormode);//  motorstepdelay, motorstepcount, motornum, motormode
   /**
    * next
    *

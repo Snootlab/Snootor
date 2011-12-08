@@ -28,7 +28,6 @@
 
 #include "snootor_step.h"
 #include "snootor_defines.h"
-
 #include "WProgram.h"
 
 
@@ -38,15 +37,17 @@
  * each array contains values for {M1,M2}
  *
  **/
+
 static uint8_t mask_AC []={0xF9,0x9F}; // bit-by-bit "and" operation, 
 static uint8_t mask_AD []={0xFA,0xAF}; // bit-by-bit "and" operation, 
-//static uint8_t mask_BC []={0x,0x0C}; // bit-by-bit "and" operation, 
-static uint8_t mask_BD []={0x03,0x0C}; // bit-by-bit "and" operation, 
-static uint8_t mask_A []={0xFE,0xFB}; // bit-by-bit "and" operation, 
-static uint8_t mask_B []={0xFD,0xF7}; // bit-by-bit "and" operation, 
-static uint8_t mask_C []={0x03,0x0C}; // bit-by-bit "and" operation, 
-static uint8_t mask_D []={0x03,0x0C}; // bit-by-bit "and" operation, 
-static uint8_t mask_RESET[]={0x0F,0xF0}; // bit-by-bit "or" operation, 
+static uint8_t mask_BC []={0xF5,0x5F}; // bit-by-bit "and" operation, 
+static uint8_t mask_BD []={0xF6,0x6F}; // bit-by-bit "and" operation, 
+static uint8_t mask_A []={0xFB,0xBF}; // bit-by-bit "and" operation, 
+static uint8_t mask_B []={0xFD,0xDF}; // bit-by-bit "and" operation, 
+static uint8_t mask_C []={0xFC,0xCF}; // bit-by-bit "and" operation, 
+static uint8_t mask_D []={0xF1,0x1F}; // bit-by-bit "and" operation, 
+static uint8_t mask_RESET[]={0x0F,0xF0}; // bit-by-bit "and" operation, 
+static uint8_t mask_base[]={0xF0,0x0F}; // bit-by-bit "and" operation, 
 
 
   /**
@@ -68,7 +69,7 @@ static uint8_t mask_RESET[]={0x0F,0xF0}; // bit-by-bit "or" operation,
    * @param motormode - halfstep or full step 
    *
    */
-void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornum, uint8_t motormode){
+void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornumber, uint8_t motormode){
   pos=0;                                   // current step
   last_val= cur_val=0;                     // current / last coil position
   last_time=0;                    // last step done un microsecs
@@ -76,6 +77,7 @@ void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornum, uint8
   motor_step_delay_microsecs=motorstepdelay;
   motor_step_count=motorstepcount;
   motor_mode=motormode;
+  motornum=motornumber;
   switch(motornum){
   case 1:
     motor_regA=M1regA;
@@ -97,61 +99,85 @@ void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornum, uint8
   // -> remember to set other PWM to 0 !!
 }
 
-
-
 uint16_t SnootorStep::next(){
+  /*
   if(steps_to_do==0){
-    SC.i2c2(motor_regA,0x0,motor_regC,0x0); //A0,C0
+    SC._regvalue= SC._regvalue & mask_RESET[motornum-1];
+  //    SC.i2c2(motor_regA,0x0,motor_regC,0x0); //A0,C0
+    SC.i2c(0x02,SC._regvalue); //A0,C0
     return I2C_MESSAGE_DELAY;
   }
+  */
+    return fullstep();
 
+    /*
+  switch(motor_mode){
+  case MOTOR_MODE_FULLSTEP:
+    return fullstep();
+    break;
+  case MOTOR_MODE_HALFSTEP:
+    return halfstep();
+    break;
+  case MOTOR_MODE_SIXWIRE:
+    return sixwire();
+    break;
+  }
+  return 12;
+    */
+}
+
+uint16_t SnootorStep::fullstep(){
+  /*
   if (micros()>last_time+motor_step_delay_microsecs){
     if(steps_to_do>0){
       steps_to_do--;
       pos++;
-    pos=(pos)%motor_step_count;
+      pos=(pos)%motor_step_count;
     }
-    if(steps_to_do<0){
-      steps_to_do++;
-      if(pos==0)
-	pos=motor_step_count-1;
-      else
-	pos--;
-    }
-    switch(motor_mode){
-    case MOTOR_MODE_FULLSTEP:
-		return fullstep();
-      break;
-    case MOTOR_MODE_HALFSTEP:
-      return halfstep();
-      break;
-    case MOTOR_MODE_SIXWIRE:
-      return sixwire();
-      break;
+    else{
+      if(steps_to_do<0){
+	steps_to_do++;
+	if(pos==0)
+	  pos=motor_step_count-1;
+	else
+	  pos--;
+      }
     }
   }
-  return 12;
-}
-
-uint16_t SnootorStep::fullstep(){
+  else{
+    return 16;
+  }
+  */
+  delayMicroseconds(motor_step_delay_microsecs);
+  pos++;
+  pos=(pos)%motor_step_count;
+  //  steps_to_do=steps_to_do-1;
+  steps_to_do -- ;
   cur_val=pos%4;
+  SC._regvalue= SC._regvalue | mask_RESET[motornum-1];
   if(last_val != cur_val){
     switch(last_val = cur_val){
     case 0:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
+      //      SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
+      SC._regvalue= SC._regvalue & mask_AC[motornum-1];
       break;
     case 1:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C+,A-
+      //      SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C+,A-
+      SC._regvalue= SC._regvalue & mask_BC[motornum-1];
       break;
     case 2:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A- 
+      //SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A- 
+      SC._regvalue= SC._regvalue & mask_BD[motornum-1];
       break;
     case 3:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
+      //      SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
+      SC._regvalue= SC._regvalue & mask_AD[motornum-1];
       break;
     }
-    last_time=micros();
   }
+  last_time=micros();
+    //  SC.i2c(0x02,SC._regvalue);
+  SC.i2c(0x02,SC._regvalue);
   if(callback)
     return I2C_MESSAGE_DELAY+this->callback();
   return I2C_MESSAGE_DELAY;
@@ -238,8 +264,12 @@ void SnootorStep::back(uint32_t steps){
 }
 
 void SnootorStep::stop(){
-      SC.i2c(motor_regA,0x0); //A0
-      SC.i2c(motor_regC,0x0); //C0
+  //  SC.i2c(motor_regA,0x0); //A0
+  //  SC.i2c(motor_regC,0x0); //C0
+  SC._regvalue= SC._regvalue & mask_RESET[motornum-1];
+  SC.i2c(0x02,SC._regvalue); //A0,C0
+  //  SC.i2c(0x02,0); //A0,C0
+
   steps_to_do=0;
 }
 

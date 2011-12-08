@@ -182,8 +182,6 @@ inline void setPWM3(uint8_t s) {
 #endif
 }
 
-
-
 void SnootorDC::init(uint8_t num,uint8_t freq) {
   SC.add(this);
   motornum = num;
