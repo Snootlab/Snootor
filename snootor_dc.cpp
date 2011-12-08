@@ -13,6 +13,8 @@
 /**
  * binary mask for motor control
  *
+ * each array contains values for {M1,M2,M3,M4}
+ *
  **/
 static uint8_t mask_forw[]={0xFE,0xFB,0xEF,0xBF}; // bit-by-bit "and" operation, 
 static uint8_t mask_back[]={0xFD,0xF7,0xDF,0x7F}; // bit-by-bit "and" operation, 
@@ -179,8 +181,6 @@ inline void setPWM3(uint8_t s) {
    #error "This chip is not supported!"
 #endif
 }
-
-
 
 void SnootorDC::init(uint8_t num,uint8_t freq) {
   SC.add(this);
