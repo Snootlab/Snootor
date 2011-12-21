@@ -9,8 +9,8 @@
 #include <Deuligne.h>
 
 #define DO_M1 1
-#define DO_M2 1
-#define DO_M3 1
+#define DO_M2 0
+#define DO_M3 0
 #define DO_M4 1
 
 SnootorDC M1, M2, M3, M4;
@@ -44,36 +44,17 @@ if(DO_M1)     M1.run(FORWARD);
 if(DO_M2)     M2.run(FORWARD);
 if(DO_M3)     M3.run(FORWARD);
 if(DO_M4)     M4.run(FORWARD);
-    lcd.setCursor(0,0);
-    lcd.print("M1 FW - M2 FW ");
-    lcd.print(SC.getReg(),HEX);
-    lcd.print("  ");
-    lcd.setCursor(0,1);
-    lcd.print("RUN1 : ");
-    lcd.print(SC.getReg(),BIN);
-    lcd.print("  ");
+lcd_dump("FFFF");
     delay(2000);
     SC.stop();
-    lcd.setCursor(0,0);
-    lcd.print("M1 RL - M2 RL ");
-    lcd.print(SC.getReg(),HEX);
-    lcd.print("  ");
-    lcd.setCursor(0,1);
-    lcd.print("STOP : ");
-    lcd.print(SC.getReg(),BIN);  delay(2000);
+lcd_dump("STOP");
+    delay(2000);
 if(DO_M1)     M1.run(FORWARD);
 if(DO_M2)     M2.run(BACKWARD);
 if(DO_M3)     M3.run(FORWARD);
 if(DO_M4)     M4.run(BACKWARD);
-    lcd.setCursor(0,0);
-    lcd.print("M1 FW - M2 BW ");
-    lcd.print(SC.getReg(),HEX);
-    lcd.print("  ");
-    lcd.setCursor(0,1);
-    lcd.print("RUN2 : ");
-    lcd.print(SC.getReg(),BIN);
-    lcd.print("  ");
-    delay(2000);
+lcd_dump("FBFB");
+delay(2000);
     SC.stop();
 }
 
@@ -85,8 +66,8 @@ if(DO_M2)    lcd.print(" 2");
 if(DO_M3)    lcd.print(" 3");
 if(DO_M4)    lcd.print(" 4");
     lcd.print(" x");
-
     lcd.print(SC.getReg(),HEX);
+    lcd.print("   ");
     lcd.setCursor(0,1);
     lcd.print(msg);
     lcd.print(" : ");
