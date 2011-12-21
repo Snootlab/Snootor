@@ -18,7 +18,7 @@
  **/
 static uint8_t mask_forw[]={0xFE,0xFB,0xEF,0xBF}; // bit-by-bit "and" operation, 
 static uint8_t mask_back[]={0xFD,0xF7,0xDF,0x7F}; // bit-by-bit "and" operation, 
-static uint8_t mask_rel[] ={0x03,0x0C,0xC0,0x30}; // bit-by-bit "or" operation, 
+static uint8_t mask_rel[] ={0x03,0x0C,0x30,0xC0}; // bit-by-bit "or" operation, 
 
 
 
@@ -37,7 +37,7 @@ inline void initPWM1(uint8_t freq) {
     defined(__AVR_ATmega328P__)
     // use PWM from timer2A on PB3 (Arduino pin #11)
     TCCR2A |= _BV(COM2A1) | _BV(WGM20) | _BV(WGM21); // fast PWM, turn on oc2a
-    TCCR2B = freq & 0x7;
+    //    TCCR2B = freq & 0x7;
     OCR2A = 0;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 11 is now PB5 (OC1A)
@@ -74,7 +74,7 @@ inline void initPWM2(uint8_t freq) {
     defined(__AVR_ATmega328P__)
     // use PWM from timer2B (pin 3)
     TCCR2A |= _BV(COM2B1) | _BV(WGM20) | _BV(WGM21); // fast PWM, turn on oc2b
-    TCCR2B = freq & 0x7;
+    //    TCCR2B = freq & 0x7;
     OCR2B = 0;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 3 is now PE5 (OC3C)
@@ -186,7 +186,6 @@ void SnootorDC::init(uint8_t num,uint8_t freq) {
   SC.add(this);
   motornum = num;
   motor_speed=0;
-  registry=0xf + num;
   inverted=(1+num)%2;
   switch (motornum) {
   case 1:
@@ -211,30 +210,28 @@ SnootorDC* SnootorDC::run(uint8_t cmd) {
   Serial.println(SC._regvalue,HEX);
 #endif
 
+
+      SC._regvalue = SC._regvalue  | mask_rel[motornum-1];
+
+
   switch (cmd) {
   case FORWARD:
     if(!inverted){
       SC._regvalue = SC._regvalue  & mask_forw[motornum-1];
-      //      SC.i2c(registry,0x0f);
     }
     else{
       SC._regvalue = SC._regvalue  & mask_back[motornum-1];
-      //      SC.i2c(registry,0xf0);
     }
     break;
   case BACKWARD:
     if(!inverted){
       SC._regvalue = SC._regvalue  & mask_back[motornum-1];
-      //      SC.i2c(registry,0xf0);
     }
     else{
       SC._regvalue = SC._regvalue  & mask_forw[motornum-1];
-      //   SC.i2c(registry,0x0f);
     }
     break;
   case RELEASE:
-      SC._regvalue = SC._regvalue  | mask_rel[motornum-1];
-    //    SC.i2c(registry,0x0);
     break;
   }
 
@@ -242,8 +239,6 @@ SnootorDC* SnootorDC::run(uint8_t cmd) {
   Serial.print("after run : ");
   Serial.println(SC._regvalue,HEX);
 #endif
-
-  //  SC._regvalue=M4_MASK_FORW & M3_MASK_FORW ;
   SC.i2c(0x02,SC._regvalue);
   return this;
 }

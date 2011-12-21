@@ -29,7 +29,7 @@ void setup(){
  * * motornum is 1 or 2, depending wiring
  * * mode is either MOTOR_MODE_HALFSTEP or MOTOR_MODE_FULLSTEP
  */
-  M.init(100,48,1,MOTOR_MODE_FULLSTEP);
+  M.init(3600,48,1,MOTOR_MODE_HALFSTEP);
 }
 void loop(){
   loop_delay();
@@ -50,7 +50,7 @@ void loop_next(){
     lcd.print("      ");
     lcd.setCursor(0,1);
     lcd.print("Steps/pos");
-    lcd.print(getSteps(),DEC);
+    lcd.print(M.getSteps(),DEC);
     lcd.print("/");
     lcd.print(M.getPosition(),DEC);
     lcd.print("      ");
@@ -68,30 +68,14 @@ void loop_delay(){
   uint8_t i;
 //  Serial.println("start fullstep mode...");
   for(i=1;i<24;i++){
-    M.forward(200  );
-    lcd.setCursor(0,0);
-    SC.delay(5);
-    lcd.print("nb ");
-    SC.delay(5);
-    lcd.print(i,DEC);
-    SC.delay(5);
-    lcd.print(" reg 0x");
-    SC.delay(5);
-    lcd.print(SC.getReg(),HEX);
-    lcd.print("  ");
-    SC.delay(5);
-    lcd.setCursor(0,1);
-    SC.delay(5);
-    lcd.print("Step/pos ");
-    SC.delay(5);
-    lcd.print(getSteps(),DEC);
-    SC.delay(5);
-    lcd.print("/");
-    SC.delay(5);
-    lcd.print(M.getPosition(),DEC);
-    lcd.print("  ");
-    SC.delay(500);
-    lcd.print("  ");
+    M.forward(200);
+    lcd_dump(i);
+    while(!M.stopped()){
+      lcd_dump(i);
+    SC.delay(1000);
+    }
+    delay(2000);
+
 }
     M.stop();
     lcd.setCursor(0,1);
@@ -100,4 +84,32 @@ void loop_delay(){
     lcd.setCursor(0,1);
     lcd.print("      ");
 
+}
+
+void lcd_dump(uint16_t i){
+      SC.delay(20);
+    lcd.setCursor(0,0);
+      SC.delay(20);
+    lcd.print("nb ");
+      SC.delay(20);
+    lcd.print(i,DEC);
+      SC.delay(20);
+    lcd.print(" reg 0x");
+      SC.delay(20);
+    lcd.print(SC.getReg(),HEX);
+      SC.delay(20);
+    lcd.print("  ");
+      SC.delay(20);
+    lcd.setCursor(0,1);
+      SC.delay(20);
+    lcd.print("Step/pos ");
+      SC.delay(20);
+    lcd.print(M.getSteps(),DEC);
+      SC.delay(20);
+    lcd.print("/");
+      SC.delay(20);
+    lcd.print(M.getPosition(),DEC);
+      SC.delay(20);
+    lcd.print("  ");
+      SC.delay(20);
 }
