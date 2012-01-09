@@ -12,8 +12,8 @@
 
 // Controller configuration
 
-#define MOTOR_MICRO_DELAY 64 // microsec "scheduler" interval
-#define I2C_MESSAGE_DELAY 480 // microsec I2C message duration
+#define MOTOR_MICRO_DELAY 42 // microsec "scheduler" interval
+#define I2C_MESSAGE_DELAY 400 // microsec I2C message duration
 
 
 //bit mask to track which motors are initialized
@@ -59,10 +59,10 @@
 
 // StepperMotor 2
 
-#define M2PWMPinA 6
-#define M2PWMPinC 5
-#define M2regA  0x13 // Max7313 registry A 
-#define M2regC  0x12 // Max7313 registry C
+#define M2PWMPinA 5
+#define M2PWMPinC 6
+#define M2regA  0x12 // Max7313 registry A 
+#define M2regC  0x13 // Max7313 registry C
 
 
 

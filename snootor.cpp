@@ -12,12 +12,17 @@
  *
  **/
 
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#define SNOOT_WIREWRITE Wire.write
+#else
 #include <avr/io.h>
 #include "WProgram.h"
-#include "inttypes.h"
+#define SNOOT_WIREWRITE Wire.send
+#endif
+
 #include "../Wire/Wire.h"
 #include <snootor.h>
-
 
 
 Snootor::Snootor(){
@@ -32,9 +37,34 @@ Snootor::Snootor(){
 
 void Snootor::enableMax(void) {
   if(maxstate==0){
-    maxstate=1;
+
     i2c( 0x6, 0x00);			// input and output config.
     i2c( 0x2, 0x00);			// input and output config.
+    i2c( 0xe, 0x0f);			// config bit
+    i2c( 0xf, 0x0c);			// blink 0 on
+    /*
+    i2c( 0xe, 0xff);                    // 0f Internal oscilator disabled. All output are static WITHOUT PWM
+    i2c( 0xf, 0x10);			// blink 0 on
+    i2c( 0x6, 0x00);			// input and output config.
+    i2c( 0x7, 0x00);			// ...
+    i2c( 0x2, 0xFF);			// global intensity reg.
+    i2c(0x3, 0xff);
+    i2c(0xe, 0xff);			// config bit
+    */
+
+    /*
+    i2c(0x10,0x00);                        // zero out pwms on register 0x10
+    i2c(0x11,0x00);                        // zero out pwms on register 0x11
+    i2c(0x12,0x00);                        // zero out pwms on register 0x12
+    i2c(0x13,0x00);                        // zero out pwms on register 0x13
+    */
+    i2c(0x14,0x00);                        // zero out pwms on register 0x14
+    i2c(0x15,0x00);                        // zero out pwms on register 0x15
+    i2c(0x16,0x00);                        // zero out pwms on register 0x16
+    i2c(0x17,0x00);                        // zero out pwms on register 0x17
+
+    maxstate=1;
+
   }
 #ifdef MOTOR_DEBUG
   Serial.println("MAX7313 I2C INIT DONE !");
@@ -160,8 +190,8 @@ void Snootor::add(SnootorMotor*m){
 
 void Snootor::i2c(uint8_t reg,uint8_t val){
   Wire.beginTransmission(MAX_ADRESS);
-  Wire.send( reg);
-  Wire.send( val);
+  SNOOT_WIREWRITE( reg);
+  SNOOT_WIREWRITE( val);
   Wire.endTransmission();
 }
 
@@ -172,14 +202,16 @@ void Snootor::i2c(uint8_t reg,uint8_t val){
 
 void Snootor::i2c2(uint8_t reg,uint8_t val,uint8_t reg2,uint8_t val2){
   Wire.beginTransmission(MAX_ADRESS);
-  Wire.send( reg);
-  Wire.send( val);
+  SNOOT_WIREWRITE( reg);
+  SNOOT_WIREWRITE( val);
+  if(reg+1 != reg2){
+    Wire.endTransmission();
+    Wire.beginTransmission(MAX_ADRESS);
+    SNOOT_WIREWRITE( reg2);
+  }
+  SNOOT_WIREWRITE( val2);
   Wire.endTransmission();
-  Wire.beginTransmission(MAX_ADRESS);
-  Wire.send( reg2);
-  Wire.send( val2);
-  Wire.endTransmission();
-}
+ }
 
 /**
  *    sending 4bit pwm by "number"

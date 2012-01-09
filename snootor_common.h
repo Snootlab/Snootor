@@ -13,7 +13,7 @@
 
 // activates debug mode : 
 
-#define MOTOR_DEBUG
+// #define MOTOR_DEBUG
 
 #include "snootor_motor.h"
 
@@ -51,6 +51,7 @@ class Snootor{
   void reset(){stop();motor_state=0;} // removes motors from scheduler
   void enableMax(); // MAX7313 initialization
   uint8_t isEnabled() {return (maxstate);}  // test MAX7313 state
+  uint8_t getReg() {return (_regvalue);}  // test MAX7313 state
   void sendPWM(uint8_t number,uint8_t value);// number : 1-8, value : 0-15
 };
 
