@@ -62,10 +62,10 @@ inline void setPWM1(uint8_t s) {
     defined(__AVR_ATmega168__) || \
     defined(__AVR_ATmega328P__)
     // use PWM from timer2A on PB3 (Arduino pin #11)
-    OCR2A = s;
+    OCR2B = s;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 11 is now PB5 (OC1A)
-    OCR1A = s;
+    OCR3C = s;
 #else
    #error "This chip is not supported!"
 #endif
@@ -100,10 +100,48 @@ inline void setPWM2(uint8_t s) {
     defined(__AVR_ATmega168__) || \
     defined(__AVR_ATmega328P__)
     // use PWM from timer2A on PB3 (Arduino pin #11)
-    OCR2B = s;
+    OCR2A = s;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 11 is now PB5 (OC1A)
-    OCR3C = s;
+    OCR1A = s;
+#else
+   #error "This chip is not supported!"
+#endif
+}
+
+inline void initPWM3(uint8_t freq) {
+#if defined(__AVR_ATmega8__) || \
+    defined(__AVR_ATmega48__) || \
+    defined(__AVR_ATmega88__) || \
+    defined(__AVR_ATmega168__) || \
+    defined(__AVR_ATmega328P__)
+    // use PWM from timer0B / PD5 (pin 5)
+    TCCR0A |= _BV(COM0B1) | _BV(WGM00) | _BV(WGM01); // fast PWM, turn on oc0a
+    //TCCR0B = freq & 0x7;
+    OCR0B = 0;
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+    // on arduino mega, pin 5 is now PE3 (OC3A)
+    TCCR3A |= _BV(COM1A1) | _BV(WGM10); // fast PWM, turn on oc3a
+    TCCR3B = (freq & 0x7) | _BV(WGM12);
+    //TCCR4B = 1 | _BV(WGM12);
+    OCR3A = 0;
+#else
+   #error "This chip is not supported!"
+#endif
+    pinMode(5, OUTPUT);
+}
+
+inline void setPWM3(uint8_t s) {
+#if defined(__AVR_ATmega8__) || \
+    defined(__AVR_ATmega48__) || \
+    defined(__AVR_ATmega88__) || \
+    defined(__AVR_ATmega168__) || \
+    defined(__AVR_ATmega328P__)
+    // use PWM from timer0A on PB3 (Arduino pin #6)
+    OCR0B = s;
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+    // on arduino mega, pin 6 is now PH3 (OC4A)
+    OCR3A = s;
 #else
    #error "This chip is not supported!"
 #endif
@@ -142,46 +180,6 @@ inline void setPWM4(uint8_t s) {
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 6 is now PH3 (OC4A)
     OCR4A = s;
-#else
-   #error "This chip is not supported!"
-#endif
-}
-
-
-
-inline void initPWM3(uint8_t freq) {
-#if defined(__AVR_ATmega8__) || \
-    defined(__AVR_ATmega48__) || \
-    defined(__AVR_ATmega88__) || \
-    defined(__AVR_ATmega168__) || \
-    defined(__AVR_ATmega328P__)
-    // use PWM from timer0B / PD5 (pin 5)
-    TCCR0A |= _BV(COM0B1) | _BV(WGM00) | _BV(WGM01); // fast PWM, turn on oc0a
-    //TCCR0B = freq & 0x7;
-    OCR0B = 0;
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-    // on arduino mega, pin 5 is now PE3 (OC3A)
-    TCCR3A |= _BV(COM1A1) | _BV(WGM10); // fast PWM, turn on oc3a
-    TCCR3B = (freq & 0x7) | _BV(WGM12);
-    //TCCR4B = 1 | _BV(WGM12);
-    OCR3A = 0;
-#else
-   #error "This chip is not supported!"
-#endif
-    pinMode(5, OUTPUT);
-}
-
-inline void setPWM3(uint8_t s) {
-#if defined(__AVR_ATmega8__) || \
-    defined(__AVR_ATmega48__) || \
-    defined(__AVR_ATmega88__) || \
-    defined(__AVR_ATmega168__) || \
-    defined(__AVR_ATmega328P__)
-    // use PWM from timer0A on PB3 (Arduino pin #6)
-    OCR0B = s;
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-    // on arduino mega, pin 6 is now PH3 (OC4A)
-    OCR3A = s;
 #else
    #error "This chip is not supported!"
 #endif
