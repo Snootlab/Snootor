@@ -12,12 +12,17 @@
  *
  **/
 
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#define SNOOT_WIREWRITE Wire.write
+#else
 #include <avr/io.h>
 #include "WProgram.h"
-#include "inttypes.h"
+#define SNOOT_WIREWRITE Wire.send
+#endif
+
 #include "../Wire/Wire.h"
 #include <snootor.h>
-
 
 
 Snootor::Snootor(){
@@ -185,8 +190,8 @@ void Snootor::add(SnootorMotor*m){
 
 void Snootor::i2c(uint8_t reg,uint8_t val){
   Wire.beginTransmission(MAX_ADRESS);
-  Wire.send( reg);
-  Wire.send( val);
+  SNOOT_WIREWRITE( reg);
+  SNOOT_WIREWRITE( val);
   Wire.endTransmission();
 }
 
@@ -197,14 +202,14 @@ void Snootor::i2c(uint8_t reg,uint8_t val){
 
 void Snootor::i2c2(uint8_t reg,uint8_t val,uint8_t reg2,uint8_t val2){
   Wire.beginTransmission(MAX_ADRESS);
-  Wire.send( reg);
-  Wire.send( val);
+  SNOOT_WIREWRITE( reg);
+  SNOOT_WIREWRITE( val);
   if(reg+1 != reg2){
     Wire.endTransmission();
     Wire.beginTransmission(MAX_ADRESS);
-    Wire.send( reg2);
+    SNOOT_WIREWRITE( reg2);
   }
-  Wire.send( val2);
+  SNOOT_WIREWRITE( val2);
   Wire.endTransmission();
  }
 

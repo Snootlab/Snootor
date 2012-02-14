@@ -46,13 +46,13 @@ class SnootorStep : public SnootorMotor{
   uint8_t motor_regC;        // max registry for motor
   uint8_t motor_pinA;
   uint8_t motor_pinC;        // pwm pins for motor
-  uint8_t pos;                                   // current step of the motor
-  volatile long steps_to_do;                           // requested steps
   uint8_t last_val, cur_val;                     // current / last coil position
   unsigned long last_time;                    // last step done un microsecs
   uint16_t (*callback)();
+  int16_t steps_to_do;                           // requested steps
 
  public:
+  uint8_t pos;                                   // current step of the motor
   /**
    * empty constructor
    *
@@ -131,14 +131,14 @@ class SnootorStep : public SnootorMotor{
    * @return true if motor is stopped, 0 otherwise
    *
    */
-  uint8_t stopped(void){return (steps_to_do==0);}
+  uint8_t stopped(void);
   /**
    * getSteps
    * 
    * @return number of steps to do
    *
    */
-  long getSteps(void){return (steps_to_do);}
+  int16_t getSteps(void){return (steps_to_do);}
   /**
    * getPosition
    * 

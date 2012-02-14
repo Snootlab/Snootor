@@ -43,7 +43,7 @@ class SnootorDC: public SnootorMotor{
   /**
    *  init
    *
-   * @param motornum - PWM numerotation adafruit, 1->4, registry 0x10 -> 0x13
+   * @param motornum - PWM numerotation adafruit, 1->4
    * @param  freq - motorspeed (from adafruit library)
    */
   void init(uint8_t motornum, uint8_t freq =  MOTOR34_8KHZ);
@@ -120,7 +120,6 @@ class SnootorDC: public SnootorMotor{
   void stop(); // -> SnootorMotor
  private:
   uint8_t motornum;
-  uint8_t registry;
   uint8_t motor_speed;
   uint8_t inverted;
 };

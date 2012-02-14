@@ -6,7 +6,12 @@
 
 
 #include "snootor_dc.h"
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
+#else
+#include <avr/io.h>
 #include "WProgram.h"
+#endif
 
 
 
@@ -18,7 +23,7 @@
  **/
 static uint8_t mask_forw[]={0xFE,0xFB,0xEF,0xBF}; // bit-by-bit "and" operation, 
 static uint8_t mask_back[]={0xFD,0xF7,0xDF,0x7F}; // bit-by-bit "and" operation, 
-static uint8_t mask_rel[] ={0x03,0x0C,0xC0,0x30}; // bit-by-bit "or" operation, 
+static uint8_t mask_rel[] ={0x03,0x0C,0x30,0xC0}; // bit-by-bit "or" operation, 
 
 
 
@@ -37,7 +42,7 @@ inline void initPWM1(uint8_t freq) {
     defined(__AVR_ATmega328P__)
     // use PWM from timer2A on PB3 (Arduino pin #11)
     TCCR2A |= _BV(COM2A1) | _BV(WGM20) | _BV(WGM21); // fast PWM, turn on oc2a
-    TCCR2B = freq & 0x7;
+    //    TCCR2B = freq & 0x7;
     OCR2A = 0;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 11 is now PB5 (OC1A)
@@ -57,10 +62,10 @@ inline void setPWM1(uint8_t s) {
     defined(__AVR_ATmega168__) || \
     defined(__AVR_ATmega328P__)
     // use PWM from timer2A on PB3 (Arduino pin #11)
-    OCR2A = s;
+    OCR2B = s;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 11 is now PB5 (OC1A)
-    OCR1A = s;
+    OCR3C = s;
 #else
    #error "This chip is not supported!"
 #endif
@@ -74,7 +79,7 @@ inline void initPWM2(uint8_t freq) {
     defined(__AVR_ATmega328P__)
     // use PWM from timer2B (pin 3)
     TCCR2A |= _BV(COM2B1) | _BV(WGM20) | _BV(WGM21); // fast PWM, turn on oc2b
-    TCCR2B = freq & 0x7;
+    //    TCCR2B = freq & 0x7;
     OCR2B = 0;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 3 is now PE5 (OC3C)
@@ -95,10 +100,48 @@ inline void setPWM2(uint8_t s) {
     defined(__AVR_ATmega168__) || \
     defined(__AVR_ATmega328P__)
     // use PWM from timer2A on PB3 (Arduino pin #11)
-    OCR2B = s;
+    OCR2A = s;
 #elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
     // on arduino mega, pin 11 is now PB5 (OC1A)
-    OCR3C = s;
+    OCR1A = s;
+#else
+   #error "This chip is not supported!"
+#endif
+}
+
+inline void initPWM3(uint8_t freq) {
+#if defined(__AVR_ATmega8__) || \
+    defined(__AVR_ATmega48__) || \
+    defined(__AVR_ATmega88__) || \
+    defined(__AVR_ATmega168__) || \
+    defined(__AVR_ATmega328P__)
+    // use PWM from timer0B / PD5 (pin 5)
+    TCCR0A |= _BV(COM0B1) | _BV(WGM00) | _BV(WGM01); // fast PWM, turn on oc0a
+    //TCCR0B = freq & 0x7;
+    OCR0B = 0;
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+    // on arduino mega, pin 5 is now PE3 (OC3A)
+    TCCR3A |= _BV(COM1A1) | _BV(WGM10); // fast PWM, turn on oc3a
+    TCCR3B = (freq & 0x7) | _BV(WGM12);
+    //TCCR4B = 1 | _BV(WGM12);
+    OCR3A = 0;
+#else
+   #error "This chip is not supported!"
+#endif
+    pinMode(5, OUTPUT);
+}
+
+inline void setPWM3(uint8_t s) {
+#if defined(__AVR_ATmega8__) || \
+    defined(__AVR_ATmega48__) || \
+    defined(__AVR_ATmega88__) || \
+    defined(__AVR_ATmega168__) || \
+    defined(__AVR_ATmega328P__)
+    // use PWM from timer0A on PB3 (Arduino pin #6)
+    OCR0B = s;
+#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+    // on arduino mega, pin 6 is now PH3 (OC4A)
+    OCR3A = s;
 #else
    #error "This chip is not supported!"
 #endif
@@ -142,51 +185,10 @@ inline void setPWM4(uint8_t s) {
 #endif
 }
 
-
-
-inline void initPWM3(uint8_t freq) {
-#if defined(__AVR_ATmega8__) || \
-    defined(__AVR_ATmega48__) || \
-    defined(__AVR_ATmega88__) || \
-    defined(__AVR_ATmega168__) || \
-    defined(__AVR_ATmega328P__)
-    // use PWM from timer0B / PD5 (pin 5)
-    TCCR0A |= _BV(COM0B1) | _BV(WGM00) | _BV(WGM01); // fast PWM, turn on oc0a
-    //TCCR0B = freq & 0x7;
-    OCR0B = 0;
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-    // on arduino mega, pin 5 is now PE3 (OC3A)
-    TCCR3A |= _BV(COM1A1) | _BV(WGM10); // fast PWM, turn on oc3a
-    TCCR3B = (freq & 0x7) | _BV(WGM12);
-    //TCCR4B = 1 | _BV(WGM12);
-    OCR3A = 0;
-#else
-   #error "This chip is not supported!"
-#endif
-    pinMode(5, OUTPUT);
-}
-
-inline void setPWM3(uint8_t s) {
-#if defined(__AVR_ATmega8__) || \
-    defined(__AVR_ATmega48__) || \
-    defined(__AVR_ATmega88__) || \
-    defined(__AVR_ATmega168__) || \
-    defined(__AVR_ATmega328P__)
-    // use PWM from timer0A on PB3 (Arduino pin #6)
-    OCR0B = s;
-#elif defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
-    // on arduino mega, pin 6 is now PH3 (OC4A)
-    OCR3A = s;
-#else
-   #error "This chip is not supported!"
-#endif
-}
-
 void SnootorDC::init(uint8_t num,uint8_t freq) {
   SC.add(this);
   motornum = num;
   motor_speed=0;
-  registry=0xf + num;
   inverted=(1+num)%2;
   switch (motornum) {
   case 1:
@@ -211,30 +213,28 @@ SnootorDC* SnootorDC::run(uint8_t cmd) {
   Serial.println(SC._regvalue,HEX);
 #endif
 
+
+      SC._regvalue = SC._regvalue  | mask_rel[motornum-1];
+
+
   switch (cmd) {
   case FORWARD:
     if(!inverted){
       SC._regvalue = SC._regvalue  & mask_forw[motornum-1];
-      //      SC.i2c(registry,0x0f);
     }
     else{
       SC._regvalue = SC._regvalue  & mask_back[motornum-1];
-      //      SC.i2c(registry,0xf0);
     }
     break;
   case BACKWARD:
     if(!inverted){
       SC._regvalue = SC._regvalue  & mask_back[motornum-1];
-      //      SC.i2c(registry,0xf0);
     }
     else{
       SC._regvalue = SC._regvalue  & mask_forw[motornum-1];
-      //   SC.i2c(registry,0x0f);
     }
     break;
   case RELEASE:
-      SC._regvalue = SC._regvalue  | mask_rel[motornum-1];
-    //    SC.i2c(registry,0x0);
     break;
   }
 
@@ -242,8 +242,6 @@ SnootorDC* SnootorDC::run(uint8_t cmd) {
   Serial.print("after run : ");
   Serial.println(SC._regvalue,HEX);
 #endif
-
-  //  SC._regvalue=M4_MASK_FORW & M3_MASK_FORW ;
   SC.i2c(0x02,SC._regvalue);
   return this;
 }
