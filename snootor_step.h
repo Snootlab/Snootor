@@ -69,13 +69,13 @@ class SnootorStep : public SnootorMotor{
    * 
    * initialization of stepper motor
    *
-   * @param motorstepdelay - delay in µs between each microstep (see example "frequency_test")
-   * @param motorstepcount - number of steps for this motor
    * @param motornum - number of this motor (1-4)
    * @param motormode - halfstep or full step 
+   * @param motorstepdelay - delay in µs between each microstep (see example "frequency_test")
+   * @param motorstepcount - number of steps for this motor
    *
    */
-  void init(int motorstepdelay,int motorstepcount,int motornumber, uint8_t motormode);//  motorstepdelay, motorstepcount, motornum, motormode
+  void init(int motornumber, uint8_t motormode = MOTOR_MODE_HALFSTEP, int motorstepdelay=100,int motorstepcount=48);//  motorstepdelay, motorstepcount, motornum, motormode
   /**
    * next
    *
