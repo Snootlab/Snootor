@@ -36,8 +36,6 @@
  *
  */
 
-//extern  uint16_t steps_to_do[2];                           // requested steps
-uint32_t getSteps(void);
 class SnootorStep : public SnootorMotor{
   unsigned int motor_step_delay_microsecs;    // delay between steps
   unsigned int motor_step_count;              // steps per round of motor
@@ -48,12 +46,13 @@ class SnootorStep : public SnootorMotor{
   uint8_t motor_regC;        // max registry for motor
   uint8_t motor_pinA;
   uint8_t motor_pinC;        // pwm pins for motor
-  uint8_t pos;                                   // current step of the motor
   uint8_t last_val, cur_val;                     // current / last coil position
   unsigned long last_time;                    // last step done un microsecs
   uint16_t (*callback)();
+  int16_t steps_to_do;                           // requested steps
 
  public:
+  uint8_t pos;                                   // current step of the motor
   /**
    * empty constructor
    *
@@ -139,7 +138,7 @@ class SnootorStep : public SnootorMotor{
    * @return number of steps to do
    *
    */
-  //  uint32_t getSteps(void);//{return (steps_to_do[motornum-1]);}
+  int16_t getSteps(void){return (steps_to_do);}
   /**
    * getPosition
    * 
