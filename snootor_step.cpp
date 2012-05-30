@@ -108,7 +108,7 @@ uint16_t SnootorStep::next(){
   if(steps_to_do==0){
     SC._regvalue= SC._regvalue & mask_RESET[motornum-1];
   // SC.i2c2(motor_regA,0x0,motor_regC,0x0); //A0,C0
-    SC.i2c(0x02,0); //A0,C0
+    SC.i2c(0x02,SC._regvalue); //A0,C0
     return I2C_MESSAGE_DELAY;
   }
  
@@ -137,11 +137,11 @@ uint16_t SnootorStep::fullstep(){
     }
     else{
       if(steps_to_do<0){
-steps_to_do++;
-if(pos==0)
-pos=motor_step_count-1;
-else
-pos--;
+	steps_to_do++;
+	if(pos==0)
+	  pos=motor_step_count-1;
+	else
+	  pos--;
       }
     }
   }

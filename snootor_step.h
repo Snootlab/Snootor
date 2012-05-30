@@ -39,7 +39,7 @@
 class SnootorStep : public SnootorMotor{
   unsigned int motor_step_delay_microsecs;    // delay between steps
   unsigned int motor_step_count;              // steps per round of motor
-  uint8_t _regvalue;              // MAX 7313 registry value storage
+  //  uint8_t _regvalue;              // MAX 7313 registry value storage
   uint8_t motornum;              // number of motor (1 or 2)
   uint8_t motor_mode;              // steps per tour of motor
   uint8_t motor_regA;

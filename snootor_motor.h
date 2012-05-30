@@ -25,7 +25,7 @@
 
 class SnootorMotor{
  public:
-
+  uint8_t _regvalue;              // MAX 7313 registry value storage
   SnootorMotor(){}
 
   virtual  uint16_t next(){} // checks if action is needed, otherwise  quits (for stepper)
