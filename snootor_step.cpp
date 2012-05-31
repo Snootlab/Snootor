@@ -106,7 +106,7 @@ void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornumber, ui
 uint16_t SnootorStep::next(){
  
   if(steps_to_do==0){
-    SC._regvalue= SC._regvalue & mask_RESET[motornum-1];
+    SC._regvalue= SC._regvalue | mask_RESET[motornum-1];
   // SC.i2c2(motor_regA,0x0,motor_regC,0x0); //A0,C0
     SC.i2c(0x02,SC._regvalue); //A0,C0
     return I2C_MESSAGE_DELAY;
@@ -236,7 +236,6 @@ uint16_t SnootorStep::halfstep(){
 
   cur_val=pos%8;
   SC._regvalue= SC._regvalue | mask_RESET[motornum-1];
-
   if(last_val != cur_val){
     switch(last_val = cur_val){
       
