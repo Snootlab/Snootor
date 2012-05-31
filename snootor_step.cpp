@@ -129,10 +129,8 @@ uint16_t SnootorStep::next(){
 
 uint16_t SnootorStep::fullstep(){
   if(steps_to_do==0){
-    Serial.println ("0 STD IN FULLSTEP !!");
     return 4;
   }
-  Serial.println ("FULLSTEP !!");
   if (micros()>last_time+motor_step_delay_microsecs){
     if(steps_to_do>0){
       steps_to_do--;
