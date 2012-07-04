@@ -82,6 +82,7 @@ void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornumber, ui
   motor_step_delay_microsecs=motorstepdelay;
   motor_step_count=motorstepcount;
   motor_mode=motormode;
+  is_running=0;
   switch(motornum){
   case 1:
     motor_regA=M1regA;
@@ -100,28 +101,38 @@ void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornumber, ui
   analogWrite(motor_pinA, 255);
   analogWrite(motor_pinC, 255);
   SC.add(this);
+  stop();
   // -> remember to set other PWM to 0 !!
 }
 
 uint16_t SnootorStep::next(){
  
+  if(steps_to_do!=0){
+/*
   if(steps_to_do==0){
     SC._regvalue= SC._regvalue | mask_RESET[motornum-1];
   // SC.i2c2(motor_regA,0x0,motor_regC,0x0); //A0,C0
     SC.i2c(0x02,SC._regvalue); //A0,C0
     return I2C_MESSAGE_DELAY;
   }
+  */
  
-  switch(motor_mode){
-  case MOTOR_MODE_FULLSTEP:
-    return fullstep();
-    break;
-  case MOTOR_MODE_HALFSTEP:
-    return halfstep();
-    break;
-  case MOTOR_MODE_SIXWIRE:
-    return sixwire();
-    break;
+    switch(motor_mode){
+    case MOTOR_MODE_FULLSTEP:
+      return fullstep();
+      break;
+    case MOTOR_MODE_HALFSTEP:
+      return halfstep();
+      break;
+    case MOTOR_MODE_SIXWIRE:
+      return sixwire();
+      break;
+    }
+  }
+  else {
+    if(is_running){
+      stop();
+    }
   }
   return 12;
 
@@ -285,20 +296,23 @@ uint16_t SnootorStep::halfstep(){
 
 void SnootorStep::goTo(int pos_to_go){
   steps_to_do=pos_to_go-pos;
+  is_running=1;
 }
 
 void SnootorStep::forward(uint32_t steps){
   steps_to_do=steps;
+  is_running=1;
 }
 
 void SnootorStep::back(uint32_t steps){
   steps_to_do=-steps;
+  is_running=1;
 }
 
 void SnootorStep::stop(){
   SC._regvalue= SC._regvalue & mask_RESET[motornum-1];
   SC.i2c(0x02,SC._regvalue);
-
+  is_running=0;
   steps_to_do=0;
 }
 
