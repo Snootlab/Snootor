@@ -21,6 +21,7 @@
  *
  * Notes :
  * - "halfstep" mode doubles steps per round (we're counting a step as the motor does them ~ )
+ * - "sixwire" mode is not functional at the moment
  * - "speed" is specified as motorstepdelay, eg, delay between each step. different speeds can be achieved by varying this parameter, you'll need to find out your mileage ;)
  *
  */
@@ -39,7 +40,6 @@
 class SnootorStep : public SnootorMotor{
   unsigned int motor_step_delay_microsecs;    // delay between steps
   unsigned int motor_step_count;              // steps per round of motor
-  //  uint8_t _regvalue;              // MAX 7313 registry value storage
   uint8_t motornum;              // number of motor (1 or 2)
   uint8_t motor_mode;              // steps per tour of motor
   uint8_t motor_regA;
@@ -134,6 +134,13 @@ class SnootorStep : public SnootorMotor{
    */
   uint8_t stopped(void);
   /**
+   * runs
+   * 
+   * @return true if motor is running, 0 otherwise
+   *
+   */
+  uint8_t runs(void) {return is_running;}
+  /**
    * getSteps
    * 
    * @return number of steps to do
@@ -167,7 +174,7 @@ class SnootorStep : public SnootorMotor{
    * 
    * allows to call a function after each step
    *
-   * !!! CARFUL - for advanced users only !!! 
+   * !!! CAREFUL - for advanced users only !!! 
    *
    * @param cb - function to run, no parameters, expected to return the approximative expected execution time of the function in µs
    *

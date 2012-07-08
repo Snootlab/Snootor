@@ -106,40 +106,29 @@ void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornumber, ui
 }
 
 uint16_t SnootorStep::next(){
- 
-  if(steps_to_do!=0){
-/*
-  if(steps_to_do==0){
-    SC._regvalue= SC._regvalue | mask_RESET[motornum-1];
-  // SC.i2c2(motor_regA,0x0,motor_regC,0x0); //A0,C0
-    SC.i2c(0x02,SC._regvalue); //A0,C0
-    return I2C_MESSAGE_DELAY;
-  }
-  */
- 
-    switch(motor_mode){
-    case MOTOR_MODE_FULLSTEP:
-      return fullstep();
-      break;
-    case MOTOR_MODE_HALFSTEP:
-      return halfstep();
-      break;
-    case MOTOR_MODE_SIXWIRE:
-      return sixwire();
-      break;
+  if(is_running){
+    if(steps_to_do!=0){
+      switch(motor_mode){
+      case MOTOR_MODE_FULLSTEP:
+	return fullstep();
+	break;
+      case MOTOR_MODE_HALFSTEP:
+	return halfstep();
+	break;
+      case MOTOR_MODE_SIXWIRE:
+	return sixwire();
+	break;
+      }
     }
-  }
-  else {
-    if(is_running){
+    if(steps_to_do==0){
       stop();
     }
   }
   return 12;
-
 }
 
 uint16_t SnootorStep::fullstep(){
-  if(steps_to_do==0){
+  if(stopped()){
     return 4;
   }
   if (micros()>last_time+motor_step_delay_microsecs){
@@ -167,26 +156,21 @@ uint16_t SnootorStep::fullstep(){
   if(last_val != cur_val){
     switch(last_val = cur_val){
     case 0:
-      // SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
-      SC._regvalue= SC._regvalue & mask_AC[motornum-1];
+      SC._regvalue= SC._regvalue & mask_AC[motornum-1];  //C+,A+
       break;
     case 1:
-      // SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C+,A-
-      SC._regvalue= SC._regvalue & mask_BC[motornum-1];
+      SC._regvalue= SC._regvalue & mask_BC[motornum-1];//C+,A-
       break;
     case 2:
-      //SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A-
-      SC._regvalue= SC._regvalue & mask_BD[motornum-1];
+      SC._regvalue= SC._regvalue & mask_BD[motornum-1]; //C-,A-
       break;
     case 3:
-      // SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
-      SC._regvalue= SC._regvalue & mask_AD[motornum-1];
+      SC._regvalue= SC._regvalue & mask_AD[motornum-1]; //C-,A+
       break;
     }
-  last_time=micros();
+    SC.i2c(0x02,SC._regvalue);
+    last_time=micros();
   }
-    // SC.i2c(0x02,SC._regvalue);
-  SC.i2c(0x02,SC._regvalue);
   if(callback)
     return I2C_MESSAGE_DELAY+this->callback();
   return I2C_MESSAGE_DELAY;
@@ -195,24 +179,23 @@ uint16_t SnootorStep::fullstep(){
 
 
 uint16_t SnootorStep::sixwire(){
+  if(stopped()){
+    return 4;
+  }
   cur_val=pos%4;
   if(last_val != cur_val){
     switch(last_val = cur_val){
     case 0:
-       SC._regvalue= SC._regvalue & mask_AD[motornum-1];
-       // SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
+       SC._regvalue= SC._regvalue & mask_AD[motornum-1]; //C-,A+
       break;
     case 1:
-       SC._regvalue= SC._regvalue & mask_AC[motornum-1];
-       // SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
+       SC._regvalue= SC._regvalue & mask_AC[motornum-1]; //C+,A+
       break;
     case 2:
-       SC._regvalue= SC._regvalue & mask_BC[motornum-1];
-       // SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C+,A-
+       SC._regvalue= SC._regvalue & mask_BC[motornum-1]; //C+,A-
       break;
     case 3:
-       SC._regvalue= SC._regvalue & mask_BD[motornum-1];
-       // SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A-
+       SC._regvalue= SC._regvalue & mask_BD[motornum-1]; //C-,A-
       break;
     }
     last_time=micros();
@@ -225,6 +208,9 @@ uint16_t SnootorStep::sixwire(){
 
 
 uint16_t SnootorStep::halfstep(){
+  if(stopped()){
+    return 4;
+  }
   if (micros()>last_time+motor_step_delay_microsecs){
     if(steps_to_do>0){
       steps_to_do--;
@@ -244,50 +230,40 @@ uint16_t SnootorStep::halfstep(){
   else{
     return 16;
   }
-
   cur_val=pos%8;
   SC._regvalue= SC._regvalue | mask_RESET[motornum-1];
   if(last_val != cur_val){
     switch(last_val = cur_val){
       
     case 0:
-       SC._regvalue= SC._regvalue & mask_C[motornum-1];
-       // SC.i2c2(motor_regA,0x0,motor_regC,0xF0); //A0,C+
+       SC._regvalue= SC._regvalue & mask_C[motornum-1]; //A0,C+
       break;
     case 1:
-       SC._regvalue= SC._regvalue & mask_BC[motornum-1];
-       // SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C,+A-
+       SC._regvalue= SC._regvalue & mask_BC[motornum-1]; //C,+A-
       break;
     case 2:
-        SC._regvalue= SC._regvalue & mask_B[motornum-1];
-       // SC.i2c2(motor_regA,0x0F,motor_regC,0x0); //C0,A-
+        SC._regvalue= SC._regvalue & mask_B[motornum-1]; //C0,A-
       break;
     case 3:
-       SC._regvalue= SC._regvalue & mask_BD[motornum-1];
-       // SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A-
+       SC._regvalue= SC._regvalue & mask_BD[motornum-1]; //C-,A-
       break;
     case 4:
-        SC._regvalue= SC._regvalue & mask_D[motornum-1];
-       // SC.i2c2(motor_regA,0x0,motor_regC,0x0F); //C-,A0
+        SC._regvalue= SC._regvalue & mask_D[motornum-1]; //C-,A0
       break;
     case 5:
-        SC._regvalue= SC._regvalue & mask_AD[motornum-1];
-       // SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
+        SC._regvalue= SC._regvalue & mask_AD[motornum-1]; //C-,A+
       break;
     case 6:
-       SC._regvalue= SC._regvalue & mask_A[motornum-1];
-       // SC.i2c2(motor_regA,0xF0,motor_regC,0x0); //C0,A+
+       SC._regvalue= SC._regvalue & mask_A[motornum-1]; //C0,A+
       break;
     case 7:
-        SC._regvalue= SC._regvalue & mask_AC[motornum-1];
-       // SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
+        SC._regvalue= SC._regvalue & mask_AC[motornum-1]; //C+,A+
       break;
       
     }
     last_time=micros();
-  }
-    // SC.i2c(0x02,SC._regvalue);
   SC.i2c(0x02,SC._regvalue);
+  }
   if(callback)
     return I2C_MESSAGE_DELAY+this->callback();
   return I2C_MESSAGE_DELAY;
@@ -310,7 +286,7 @@ void SnootorStep::back(uint32_t steps){
 }
 
 void SnootorStep::stop(){
-  SC._regvalue= SC._regvalue & mask_RESET[motornum-1];
+  SC._regvalue= SC._regvalue & mask_base[motornum-1];
   SC.i2c(0x02,SC._regvalue);
   is_running=0;
   steps_to_do=0;

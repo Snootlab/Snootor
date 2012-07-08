@@ -4,7 +4,7 @@
 //
 // Based on Adafruit Motor shield library
 // https://github.com/adafruit/Adafruit-Motor-Shield-library
-// copyleft Snootlab, 2011
+// copyleft Snootlab, 2011-2012
 // this code is public domain, enjoy!
 
 

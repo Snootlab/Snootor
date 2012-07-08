@@ -28,11 +28,10 @@
 Snootor::Snootor(){
     motor_state=0;
     maxstate=0;
-      /**
-   * keep track of "directions"
-   **/
-    _regvalue=0xff;
-
+    /**
+     * keep track of "directions"
+     **/
+    _regvalue=0;
 }
 
 void Snootor::enableMax(void) {
@@ -70,35 +69,6 @@ void Snootor::enableMax(void) {
   Serial.println("MAX7313 I2C INIT DONE !");
 #endif
 }
-
-/*
-void Snootor::enableMax(void) {
-// following setup is test purpose, try to improve it with mixed output style
-
-  if(maxstate==0){
-    i2c( 0xe, 0xff);                    // 0f Internal oscilator disabled. All output are static WITHOUT PWM
-    i2c( 0xf, 0x10);			// blink 0 on
-    i2c( 0x6, 0x00);			// input and output config.
-    i2c( 0x7, 0x00);			// ...
-    i2c( 0x2, 0xff);			// global intensity reg.
-    i2c(0x3, 0xff);
-    i2c(0xe, 0xff);			// config bit
-    i2c(0x10,0x00);                        // zero out pwms on register 0x10
-    i2c(0x11,0x00);                        // zero out pwms on register 0x11
-    i2c(0x12,0x00);                        // zero out pwms on register 0x12
-    i2c(0x13,0x00);                        // zero out pwms on register 0x13
-    i2c(0x14,0x00);                        // zero out pwms on register 0x14
-    i2c(0x15,0x00);                        // zero out pwms on register 0x15
-    i2c(0x16,0x00);                        // zero out pwms on register 0x16
-    i2c(0x17,0x00);                        // zero out pwms on register 0x17
-    maxstate=1;
-  }
-#ifdef MOTOR_DEBUG
-  Serial.println("MAX7313 I2C INIT DONE !");
-#endif
-}
-
-*/
 
 /**
  *
