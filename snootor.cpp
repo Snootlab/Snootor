@@ -153,11 +153,10 @@ void Snootor::i2c(uint8_t reg,uint8_t val){
  **/
 
 
-void Snootor::i2c2(uint8_t reg,uint8_t val,uint8_t reg2,uint8_t val2){
+void Snootor::i2c2(uint8_t reg,uint8_t val,uint8_t val2){
   Wire.beginTransmission(MAX_ADRESS);
   Wire.write( reg);
   Wire.write( val);
-  Wire.write( reg2);
   Wire.write( val2);
   Wire.endTransmission();
 }

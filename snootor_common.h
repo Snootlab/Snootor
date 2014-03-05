@@ -36,7 +36,7 @@ class Snootor{
   uint8_t motor_state; // bitmask for active motors
  public:
   void i2c(uint8_t,uint8_t); // i2c messages
-  void i2c2(uint8_t,uint8_t,uint8_t,uint8_t); // i2c messages, two data bytes
+  void i2c2(uint8_t,uint8_t,uint8_t); // i2c messages, two data bytes
   Snootor();
   ~Snootor(){}
   void delay(uint32_t); // scheduler

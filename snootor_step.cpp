@@ -84,7 +84,7 @@ void SnootorStep::init(int motorstepdelay,int motorstepcount,int motornum, uint8
 
 uint16_t SnootorStep::next(){
   if(steps_to_do==0){
-    SC.i2c2(motor_regA,0x0,motor_regC,0x0); //A0,C0
+    SC.i2c2(motor_regA,0x0,0x0); //A0,C0
     return I2C_MESSAGE_DELAY;
   }
 
@@ -121,16 +121,16 @@ uint16_t SnootorStep::fullstep(){
   if(last_val != cur_val){
     switch(last_val = cur_val){
     case 0:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
+      SC.i2c2(motor_regA,0xF0,0xF0); //C+,A+
       break;
     case 1:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C+,A-
+      SC.i2c2(motor_regA,0x0F,0xF0); //C+,A-
       break;
     case 2:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A- 
+      SC.i2c2(motor_regA,0x0F,0x0F); //C-,A- 
       break;
     case 3:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
+      SC.i2c2(motor_regA,0xF0,0x0F); //C-,A+
       break;
     }
     last_time=micros();
@@ -147,16 +147,16 @@ uint16_t SnootorStep::sixwire(){
   if(last_val != cur_val){
     switch(last_val = cur_val){
     case 0:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
+      SC.i2c2(motor_regA,0xF0,0x0F); //C-,A+
       break;
     case 1:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
+      SC.i2c2(motor_regA,0xF0,0xF0); //C+,A+
       break;
     case 2:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C+,A- 
+      SC.i2c2(motor_regA,0x0F,0xF0); //C+,A- 
       break;
     case 3:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A-
+      SC.i2c2(motor_regA,0x0F,0x0F); //C-,A-
       break;
     }
     last_time=micros();
@@ -175,32 +175,32 @@ uint16_t SnootorStep::halfstep(){
     switch(last_val = cur_val){
       
     case 0:
-      SC.i2c2(motor_regA,0x0,motor_regC,0xF0); //A0,C+
+      SC.i2c2(motor_regA,0x0,0xF0); //A0,C+
       break;
     case 1:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0xF0); //C,+A-
+      SC.i2c2(motor_regA,0x0F,0xF0); //C,+A-
       break;
       
     case 2:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0x0); //C0,A-
+      SC.i2c2(motor_regA,0x0F,0x0); //C0,A-
       break;
       
       
     case 3:
-      SC.i2c2(motor_regA,0x0F,motor_regC,0x0F); //C-,A-
+      SC.i2c2(motor_regA,0x0F,0x0F); //C-,A-
       break;
     case 4:
-      SC.i2c2(motor_regA,0x0,motor_regC,0x0F); //C-,A0
+      SC.i2c2(motor_regA,0x0,0x0F); //C-,A0
       break;
       
     case 5:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0x0F); //C-,A+
+      SC.i2c2(motor_regA,0xF0,0x0F); //C-,A+
       break;
     case 6:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0x0); //C0,A+
+      SC.i2c2(motor_regA,0xF0,0x0); //C0,A+
       break;
     case 7:
-      SC.i2c2(motor_regA,0xF0,motor_regC,0xF0); //C+,A+
+      SC.i2c2(motor_regA,0xF0,0xF0); //C+,A+
       break;
       
     }
