@@ -21,7 +21,7 @@
 #define SNOOT_WIREWRITE Wire.send
 #endif
 
-#include "../Wire/Wire.h"
+#include "<Wire.h>"
 #include <snootor.h>
 
 
